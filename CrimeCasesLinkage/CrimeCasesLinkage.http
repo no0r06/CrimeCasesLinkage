@@ -1,0 +1,6 @@
+@CrimeCasesLinkage_HostAddress = http://localhost:5116
+
+GET {{CrimeCasesLinkage_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
