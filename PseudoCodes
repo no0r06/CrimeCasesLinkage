@@ -1,0 +1,151 @@
+v0:
+INPUT: NewCase
+DATA: AllCases
+
+FOR each case IN AllCases:
+    score = 0
+
+    IF case.method == NewCase.method:
+        score++
+
+    IF case.location == NewCase.location:
+        score++
+
+    IF case.victim.gender == NewCase.gender:
+        score++
+
+    IF age ranges overlap:
+        score++
+
+    STORE (case.id, score)
+
+RETURN sorted results by score
+
+
+
+
+
+v1:
+INPUT: NewCase
+DATA: AllCases
+
+FOR each case IN AllCases:
+    score = 0
+
+    IF case.method == NewCase.method:
+        score += 3   // HIGH WEIGHT
+
+    IF case.location == NewCase.location:
+        score += 1
+
+    IF case.victim.gender == NewCase.gender:
+        score += 1
+
+    IF age ranges overlap:
+        score += 1
+
+    STORE (case.id, score)
+
+RETURN sorted results by score
+
+
+
+v2:
+INPUT: NewCase
+DATA: AllCases
+
+FOR each case IN AllCases:
+    score = 0
+
+    IF case.location == NewCase.location:
+        score += 2   // HIGH WEIGHT
+
+    IF case.victim.gender == NewCase.gender:
+        score += 2   // HIGH WEIGHT
+
+    IF case.method == NewCase.method:
+        score += 1
+
+    IF age ranges overlap:
+        score += 1
+
+    STORE (case.id, score)
+
+RETURN sorted results by score
+
+
+v3:
+INPUT: NewCase, threshold
+DATA: CrimeCases + Victims
+
+Normalize input (location, gender, method)
+
+STEP 1: Group filtering (reduce search space)
+    SELECT cases FROM AllCases
+    WHERE case.location == input.location
+       OR case.method == input.method
+
+STEP 2: For each caseA in filtered cases:
+    FOR each caseB in filtered cases AFTER caseA:
+
+        score = 0
+
+        IF caseA.location == caseB.location:
+            score++
+
+        IF caseA.method == caseB.method:
+            score++
+
+        IF caseA.victim.gender == caseB.victim.gender:
+            score++
+
+        IF age ranges overlap:
+            score++
+
+        IF score >= threshold:
+            store (caseA.id, caseB.id, score)
+
+RETURN results + performance metrics
+
+
+v4:
+INPUT:
+    NewCase (Location, Method, VictimGender, AgeMin, AgeMax)
+    threshold
+    K (Top-K)
+
+DATA: CrimeCases + Victims
+
+Normalize input
+
+STEP 1: Filter candidates (indexed selection)
+    candidates = SELECT cases FROM database
+                 WHERE case.location == input.location
+                    OR case.method == input.method
+                    OR case.victim.gender == input.gender
+
+STEP 2: Initialize empty TopK list
+
+STEP 3: FOR each case IN candidates:
+
+            score = 0
+
+            IF case.location == input.location:
+                score++
+
+            IF case.method == input.method:
+                score++
+
+            IF case.victim.gender == input.gender:
+                score++
+
+            IF age ranges overlap:
+                score++
+
+            IF score >= threshold:
+                insert (case.id, score) into TopK list
+
+                sort TopK descending
+                keep only top K elements
+
+STEP 4: RETURN TopK results + metrics
