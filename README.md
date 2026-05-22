@@ -90,12 +90,12 @@ Age range overlap → +1
 Maximum score depends on matching attributes.
 
 📊 Performance Summary
-Version	Strategy	Speed	Complexity	Output Control
-V0	Full brute force	Slow (~13s)	O(N²)	None
-V1	Method grouping	Medium (~4.6s)	Reduced O(N²)	None
-V2	Multi-feature grouping	Faster (~4.1s)	Reduced O(N²)	None
-V3	Indexed filtering	Medium (~5.5s)	Reduced dataset	Partial
-V4	Top-K ranking system	Fast (~3.3s)	Optimized practical	Controlled
+Version	Strategy	Correct Complexity	Explanation
+V0	Compare input vs all cases	O(N)	Single pass over dataset
+V1	Method filtering + input compare	O(N)	Still scanning dataset, but minor filtering
+V2	Multi-feature grouping	O(N) (smaller constant)	Same scan, better pre-grouping
+V3	Indexed filtering	O(M)	M << N due to database filtering
+V4	Indexed + Top-K ranking	O(M log K)	Maintain heap/Top-K instead of full sort
 🧠 Key Design Philosophy
 
 This project is not about changing the scoring model.
